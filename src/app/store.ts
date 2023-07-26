@@ -22,7 +22,7 @@ export const store = configureStore({
 // непосредственно создаём store
 // export const store = createStore(rootReducer, applyMiddleware(thunkMiddleware));
 // определить автоматически тип всего объекта состояния
-export type AppRootStateType = ReturnType<typeof rootReducer>;
+export type AppRootStateType = ReturnType<typeof store.getState>;
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppRootStateType, unknown, AnyAction>;
 
