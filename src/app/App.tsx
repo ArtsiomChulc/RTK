@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { selectIsLoggedIn } from "features/Login/auth.selector";
+import { selectIsInitialized } from "app/app.selector";
 
 type PropsType = {
     demo?: boolean;
@@ -27,7 +28,8 @@ type PropsType = {
 
 function App({ demo = false }: PropsType) {
     const status = useSelector<AppRootStateType, RequestStatusType>((state) => state.app.status);
-    const isInitialized = useSelector<AppRootStateType, boolean>((state) => state.app.isInitialized);
+    // const isInitialized = useSelector<AppRootStateType, boolean>((state) => state.app.isInitialized);
+    const isInitialized = useSelector(selectIsInitialized);
     // const isLoggedIn = useSelector<AppRootStateType, boolean>((state) => state.auth.isLoggedIn);
     const isLoggedIn = useSelector(selectIsLoggedIn);
     const dispatch = useDispatch<any>();
