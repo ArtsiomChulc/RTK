@@ -36,6 +36,9 @@ const slice = createSlice({
             // return { ...state, [action.todolistId]: action.tasks };
             state[action.payload.todolistId] = action.payload.tasks;
         },
+        clearTasks: () => {
+            return {};
+        },
     },
     extraReducers: (builder) => {
         builder

@@ -46,6 +46,9 @@ const slice = createSlice({
             // return action.todolists.map((tl) => ({ ...tl, filter: "all", entityStatus: "idle" }));
             return action.payload.todolists.map((tl) => ({ ...tl, filter: "all", entityStatus: "idle" }));
         },
+        clearTodolists: () => {
+            return [];
+        },
     },
 });
 
