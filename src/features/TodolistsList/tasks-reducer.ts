@@ -4,6 +4,7 @@ import { appActions } from "app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "utils/error-utils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { todosActions } from "features/TodolistsList/todolists-reducer";
+import { clearTaskAndTodos } from "common/actions/common.actions";
 
 const slice = createSlice({
     name: "tasks",
@@ -36,9 +37,9 @@ const slice = createSlice({
             // return { ...state, [action.todolistId]: action.tasks };
             state[action.payload.todolistId] = action.payload.tasks;
         },
-        clearTasks: () => {
-            return {};
-        },
+        // clearTasks: () => {
+        //     return {};       первый вариант решения проблемы с LogOut
+        // },
     },
     extraReducers: (builder) => {
         builder
@@ -53,6 +54,9 @@ const slice = createSlice({
                 action.payload.todolists.forEach((tl) => {
                     state[tl.id] = [];
                 });
+            })
+            .addCase(clearTaskAndTodos.type, () => {
+                return {};
             });
     },
 });

@@ -5,6 +5,7 @@ import { AppThunk } from "app/store";
 import { appActions } from "app/app-reducer";
 import { tasksActions } from "features/TodolistsList/tasks-reducer";
 import { todosActions } from "features/TodolistsList/todolists-reducer";
+import { clearTaskAndTodos } from "common/actions/common.actions";
 
 // вместо authReducer
 const slice = createSlice({
@@ -65,8 +66,9 @@ export const logoutTC = (): AppThunk => (dispatch) => {
         .then((res) => {
             if (res.data.resultCode === 0) {
                 dispatch(authActions.setIsLoggedIn({ isLoggedIn: false }));
-                dispatch(tasksActions.clearTasks());
-                dispatch(todosActions.clearTodolists());
+                // dispatch(tasksActions.clearTasks());
+                // dispatch(todosActions.clearTodolists()); первый вариант решения проблемы с LogOut
+                dispatch(clearTaskAndTodos());
                 dispatch(appActions.setAppStatus({ status: "succeeded" }));
             } else {
                 handleServerAppError(res.data, dispatch);
