@@ -64,22 +64,17 @@ const slice = createSlice({
     },
 });
 
-export const tasksReducer = slice.reducer;
-
-export const tasksActions = slice.actions;
-
 // thunks
 
 //создаем санку с помощью redux-toolkit
 
-export const fetchTasksTC = createAsyncThunk("tasks/fetchTasksThunkCreator", (todolistId: string, { dispatch }) => {
+const fetchTasksTC = createAsyncThunk("tasks/fetchTasksThunkCreator", async (todolistId: string, { dispatch }) => {
     // const { dispatch } = thunkAPI;
     dispatch(appActions.setAppStatus({ status: "loading" }));
-    todolistsAPI.getTasks(todolistId).then((res) => {
-        const tasks = res.data.items;
-        dispatch(tasksActions.setTasks({ tasks, todolistId }));
-        dispatch(appActions.setAppStatus({ status: "succeeded" }));
-    });
+    const res = await todolistsAPI.getTasks(todolistId);
+    const tasks = res.data.items;
+    dispatch(tasksActions.setTasks({ tasks, todolistId }));
+    dispatch(appActions.setAppStatus({ status: "succeeded" }));
 });
 
 // export const fetchTasksTC =
@@ -156,6 +151,12 @@ export const updateTaskTC =
                 handleServerNetworkError(error, dispatch);
             });
     };
+
+export const tasksReducer = slice.reducer;
+
+export const tasksActions = slice.actions;
+
+export const tasksThunk = { fetchTasksTC };
 
 // types
 export type UpdateDomainTaskModelType = {
