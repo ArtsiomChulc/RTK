@@ -51,9 +51,15 @@ const slice = createSlice({
         //     return [];           первый вариант решения проблемы с LogOut
         // },
     },
+    // extraReducers: (builder) => {
+    //     builder.addCase(clearTaskAndTodos.type, () => {    второй вариант решения проблемы с LogOut
+    //         return [];
+    //     });
+    // },
     extraReducers: (builder) => {
-        builder.addCase(clearTaskAndTodos.type, () => {
-            return [];
+        builder.addCase(clearTaskAndTodos, (state, action) => {
+            //третий вариант решения проблемы с LogOut
+            return action.payload.todolists;
         });
     },
 });

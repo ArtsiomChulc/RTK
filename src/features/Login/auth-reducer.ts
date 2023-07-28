@@ -3,8 +3,6 @@ import { handleServerAppError, handleServerNetworkError } from "utils/error-util
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk } from "app/store";
 import { appActions } from "app/app-reducer";
-import { tasksActions } from "features/TodolistsList/tasks-reducer";
-import { todosActions } from "features/TodolistsList/todolists-reducer";
 import { clearTaskAndTodos } from "common/actions/common.actions";
 
 // вместо authReducer
@@ -68,7 +66,7 @@ export const logoutTC = (): AppThunk => (dispatch) => {
                 dispatch(authActions.setIsLoggedIn({ isLoggedIn: false }));
                 // dispatch(tasksActions.clearTasks());
                 // dispatch(todosActions.clearTodolists()); первый вариант решения проблемы с LogOut
-                dispatch(clearTaskAndTodos());
+                dispatch(clearTaskAndTodos({ tasks: {}, todolists: [] })); // второй вариант решения проблемы с LogOut
                 dispatch(appActions.setAppStatus({ status: "succeeded" }));
             } else {
                 handleServerAppError(res.data, dispatch);

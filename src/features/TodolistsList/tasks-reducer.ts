@@ -4,7 +4,7 @@ import { appActions } from "app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "utils/error-utils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { todosActions } from "features/TodolistsList/todolists-reducer";
-import { clearTaskAndTodos } from "common/actions/common.actions";
+import { clearTaskAndTodos, ClearTaskAndTodosType } from "common/actions/common.actions";
 
 const slice = createSlice({
     name: "tasks",
@@ -55,8 +55,11 @@ const slice = createSlice({
                     state[tl.id] = [];
                 });
             })
-            .addCase(clearTaskAndTodos.type, () => {
-                return {};
+            // .addCase(clearTaskAndTodos.type, () => {
+            //     return {};    второй вариант решения проблемы с LogOut
+            // });
+            .addCase(clearTaskAndTodos.type, (state, action: PayloadAction<ClearTaskAndTodosType>) => {
+                return action.payload.tasks; //третий вариант решения проблемы с LogOut
             });
     },
 });
