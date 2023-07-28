@@ -2,7 +2,7 @@ import { TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelTy
 import { AppRootStateType, AppThunk } from "app/store";
 import { appActions } from "app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "utils/error-utils";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { todosActions } from "features/TodolistsList/todolists-reducer";
 import { clearTaskAndTodos, ClearTaskAndTodosType } from "common/actions/common.actions";
 
@@ -69,16 +69,30 @@ export const tasksReducer = slice.reducer;
 export const tasksActions = slice.actions;
 
 // thunks
-export const fetchTasksTC =
-    (todolistId: string): AppThunk =>
-    (dispatch) => {
-        dispatch(appActions.setAppStatus({ status: "loading" }));
-        todolistsAPI.getTasks(todolistId).then((res) => {
-            const tasks = res.data.items;
-            dispatch(tasksActions.setTasks({ tasks, todolistId }));
-            dispatch(appActions.setAppStatus({ status: "succeeded" }));
-        });
-    };
+
+//создаем санку с помощью redux-toolkit
+
+export const fetchTasksTC = createAsyncThunk("tasks/fetchTasksThunkCreator", (todolistId: string, { dispatch }) => {
+    // const { dispatch } = thunkAPI;
+    dispatch(appActions.setAppStatus({ status: "loading" }));
+    todolistsAPI.getTasks(todolistId).then((res) => {
+        const tasks = res.data.items;
+        dispatch(tasksActions.setTasks({ tasks, todolistId }));
+        dispatch(appActions.setAppStatus({ status: "succeeded" }));
+    });
+});
+
+// export const fetchTasksTC =
+//     (todolistId: string): AppThunk =>
+//     (dispatch) => {
+//         dispatch(appActions.setAppStatus({ status: "loading" }));
+//         todolistsAPI.getTasks(todolistId).then((res) => {
+//             const tasks = res.data.items;
+//             dispatch(tasksActions.setTasks({ tasks, todolistId }));
+//             dispatch(appActions.setAppStatus({ status: "succeeded" }));
+//         });
+//     };
+
 export const removeTaskTC =
     (taskId: string, todolistId: string): AppThunk =>
     (dispatch) => {
