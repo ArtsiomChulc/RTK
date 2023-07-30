@@ -4,12 +4,13 @@ import {
     TaskStatuses,
     TaskType,
     todolistsAPI,
+    UpdateTaskArgType,
     UpdateTaskModelType,
 } from "api/todolists-api";
-import { AppDispatch, AppRootStateType, AppThunk } from "app/store";
+import { AppThunk } from "app/store";
 import { appActions } from "app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "utils/error-utils";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { todosActions } from "features/TodolistsList/todolists-reducer";
 import { clearTaskAndTodos, ClearTaskAndTodosType } from "common/actions/common.actions";
 import { createAppAsyncThunk } from "utils/create-app-async-thunk";
@@ -29,18 +30,18 @@ const slice = createSlice({
         //     let taskForCurrentTodos = state[action.payload.task.todoListId] as TaskType[];
         //     taskForCurrentTodos.unshift(action.payload.task);
         // },
-        updateTask: (
-            state,
-            action: PayloadAction<{ taskId: string; model: UpdateDomainTaskModelType; todolistId: string }>,
-        ) => {
-            // return {...state, [action.todolistId]: state[action.todolistId].map((t) =>
-            //         t.id === action.taskId ? { ...t, ...action.model } : t,
-            //     ),
-            // };
-            let taskForCurrentTodos = state[action.payload.todolistId];
-            const index = taskForCurrentTodos.findIndex((tl) => tl.id === action.payload.taskId);
-            if (index !== -1) taskForCurrentTodos[index] = { ...taskForCurrentTodos[index], ...action.payload.model };
-        },
+        // updateTask: (
+        //     state,
+        //     action: PayloadAction<{ taskId: string; model: UpdateDomainTaskModelType; todolistId: string }>,
+        // ) => {
+        //     // return {...state, [action.todolistId]: state[action.todolistId].map((t) =>
+        //     //         t.id === action.taskId ? { ...t, ...action.model } : t,
+        //     //     ),
+        //     // };
+        //     let taskForCurrentTodos = state[action.payload.todolistId];
+        //     const index = taskForCurrentTodos.findIndex((tl) => tl.id === action.payload.taskId);
+        //     if (index !== -1) taskForCurrentTodos[index] = { ...taskForCurrentTodos[index], ...action.payload.model };
+        // },
         // setTasks: (state, action: PayloadAction<{ tasks: Array<TaskType>; todolistId: string }>) => {
         //     // return { ...state, [action.todolistId]: action.tasks };
         //     state[action.payload.todolistId] = action.payload.tasks;
@@ -57,6 +58,12 @@ const slice = createSlice({
             .addCase(addTaskTC.fulfilled, (state, action) => {
                 let taskForCurrentTodos = state[action.payload.task.todoListId] as TaskType[];
                 taskForCurrentTodos.unshift(action.payload.task);
+            })
+            .addCase(updateTaskTC.fulfilled, (state, action) => {
+                let taskForCurrentTodos = state[action.payload.todolistId];
+                const index = taskForCurrentTodos.findIndex((tl) => tl.id === action.payload.taskId);
+                if (index !== -1)
+                    taskForCurrentTodos[index] = { ...taskForCurrentTodos[index], ...action.payload.domainModel };
             })
             .addCase(todosActions.addTodolist, (state, action) => {
                 // return { ...state, [action.todolist.id]: [] };
@@ -161,47 +168,84 @@ const addTaskTC = createAppAsyncThunk<{ task: TaskType }, AddTaskArgType>(
 //                 handleServerNetworkError(error, dispatch);
 //             });
 //     };
-export const updateTaskTC =
-    (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string): AppThunk =>
-    (dispatch, getState: () => AppRootStateType) => {
-        const state = getState();
-        const task = state.tasks[todolistId].find((t) => t.id === taskId);
-        if (!task) {
-            //throw new Error("task not found in the state");
-            console.warn("task not found in the state");
-            return;
+
+const updateTaskTC = createAppAsyncThunk<UpdateTaskArgType, UpdateTaskArgType>(
+    "tasks/updateTaskTS",
+    async (arg, { dispatch, rejectWithValue, getState }) => {
+        try {
+            const state = getState();
+            const task = state.tasks[arg.todolistId].find((t) => t.id === arg.taskId);
+            if (!task) {
+                //throw new Error("task not found in the state");
+                console.warn("task not found in the state");
+                return rejectWithValue(null);
+            }
+
+            const apiModel: UpdateTaskModelType = {
+                deadline: task.deadline,
+                description: task.description,
+                priority: task.priority,
+                startDate: task.startDate,
+                title: task.title,
+                status: task.status,
+                ...arg.domainModel,
+            };
+
+            const res = await todolistsAPI.updateTask(arg.todolistId, arg.taskId, apiModel);
+            if (res.data.resultCode === 0) {
+                return arg;
+            } else {
+                handleServerAppError(res.data, dispatch);
+                return rejectWithValue(null);
+            }
+        } catch (e) {
+            handleServerNetworkError(e, dispatch);
+            return rejectWithValue(null);
         }
+    },
+);
 
-        const apiModel: UpdateTaskModelType = {
-            deadline: task.deadline,
-            description: task.description,
-            priority: task.priority,
-            startDate: task.startDate,
-            title: task.title,
-            status: task.status,
-            ...domainModel,
-        };
-
-        todolistsAPI
-            .updateTask(todolistId, taskId, apiModel)
-            .then((res) => {
-                if (res.data.resultCode === 0) {
-                    const action = tasksActions.updateTask({ taskId, todolistId, model: domainModel });
-                    dispatch(action);
-                } else {
-                    handleServerAppError(res.data, dispatch);
-                }
-            })
-            .catch((error) => {
-                handleServerNetworkError(error, dispatch);
-            });
-    };
+// export const _updateTaskTC =
+//     (taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string): AppThunk =>
+//     (dispatch, getState: () => AppRootStateType) => {
+//         const state = getState();
+//         const task = state.tasks[todolistId].find((t) => t.id === taskId);
+//         if (!task) {
+//             //throw new Error("task not found in the state");
+//             console.warn("task not found in the state");
+//             return;
+//         }
+//
+//         const apiModel: UpdateTaskModelType = {
+//             deadline: task.deadline,
+//             description: task.description,
+//             priority: task.priority,
+//             startDate: task.startDate,
+//             title: task.title,
+//             status: task.status,
+//             ...domainModel,
+//         };
+//
+//         todolistsAPI
+//             .updateTask(todolistId, taskId, apiModel)
+//             .then((res) => {
+//                 if (res.data.resultCode === 0) {
+//                     const action = tasksThunk.updateTaskTC({ taskId, todolistId, domainModel });
+//                     dispatch(action);
+//                 } else {
+//                     handleServerAppError(res.data, dispatch);
+//                 }
+//             })
+//             .catch((error) => {
+//                 handleServerNetworkError(error, dispatch);
+//             });
+//     };
 
 export const tasksReducer = slice.reducer;
 
 export const tasksActions = slice.actions;
 
-export const tasksThunk = { fetchTasksTC, addTaskTC };
+export const tasksThunk = { fetchTasksTC, addTaskTC, updateTaskTC };
 
 // types
 export type UpdateDomainTaskModelType = {
