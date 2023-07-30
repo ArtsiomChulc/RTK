@@ -33,16 +33,19 @@ const slice = createSlice({
             const index = taskForCurrentTodos.findIndex((tl) => tl.id === action.payload.taskId);
             if (index !== -1) taskForCurrentTodos[index] = { ...taskForCurrentTodos[index], ...action.payload.model };
         },
-        setTasks: (state, action: PayloadAction<{ tasks: Array<TaskType>; todolistId: string }>) => {
-            // return { ...state, [action.todolistId]: action.tasks };
-            state[action.payload.todolistId] = action.payload.tasks;
-        },
+        // setTasks: (state, action: PayloadAction<{ tasks: Array<TaskType>; todolistId: string }>) => {
+        //     // return { ...state, [action.todolistId]: action.tasks };
+        //     state[action.payload.todolistId] = action.payload.tasks;
+        // },
         // clearTasks: () => {
         //     return {};       первый вариант решения проблемы с LogOut
         // },
     },
     extraReducers: (builder) => {
         builder
+            .addCase(fetchTasksTC.fulfilled, (state, action) => {
+                state[action.payload.todolistId] = action.payload.tasks;
+            })
             .addCase(todosActions.addTodolist, (state, action) => {
                 // return { ...state, [action.todolist.id]: [] };
                 state[action.payload.todolist.id] = [];
@@ -68,14 +71,22 @@ const slice = createSlice({
 
 //создаем санку с помощью redux-toolkit
 
-const fetchTasksTC = createAsyncThunk("tasks/fetchTasksThunkCreator", async (todolistId: string, { dispatch }) => {
-    // const { dispatch } = thunkAPI;
-    dispatch(appActions.setAppStatus({ status: "loading" }));
-    const res = await todolistsAPI.getTasks(todolistId);
-    const tasks = res.data.items;
-    dispatch(tasksActions.setTasks({ tasks, todolistId }));
-    dispatch(appActions.setAppStatus({ status: "succeeded" }));
-});
+const fetchTasksTC = createAsyncThunk(
+    "tasks/fetchTasksThunkCreator",
+    async (todolistId: string, { dispatch, rejectWithValue }) => {
+        // const { dispatch } = thunkAPI;
+        try {
+            dispatch(appActions.setAppStatus({ status: "loading" }));
+            const res = await todolistsAPI.getTasks(todolistId);
+            const tasks = res.data.items;
+            dispatch(appActions.setAppStatus({ status: "succeeded" }));
+            return { tasks, todolistId };
+        } catch (e: any) {
+            handleServerNetworkError(e, dispatch);
+            return rejectWithValue(null);
+        }
+    },
+);
 
 // export const fetchTasksTC =
 //     (todolistId: string): AppThunk =>
