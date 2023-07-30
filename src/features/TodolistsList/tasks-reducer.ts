@@ -9,11 +9,12 @@ import {
 } from "api/todolists-api";
 import { AppThunk } from "app/store";
 import { appActions } from "app/app-reducer";
-import { handleServerAppError, handleServerNetworkError } from "utils/error-utils";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { todosActions } from "features/TodolistsList/todolists-reducer";
 import { clearTaskAndTodos, ClearTaskAndTodosType } from "common/actions/common.actions";
 import { createAppAsyncThunk } from "utils/create-app-async-thunk";
+import { handleServerNetworkError } from "utils/handle-server-network-error";
+import { handleServerAppError } from "utils/handle-server-app-error";
 
 const slice = createSlice({
     name: "tasks",
@@ -85,6 +86,12 @@ const slice = createSlice({
             });
     },
 });
+
+enum ResultCode {
+    success = 0,
+    error = 1,
+    captcha = 10,
+}
 
 // thunks
 
@@ -192,7 +199,7 @@ const updateTaskTC = createAppAsyncThunk<UpdateTaskArgType, UpdateTaskArgType>(
             };
 
             const res = await todolistsAPI.updateTask(arg.todolistId, arg.taskId, apiModel);
-            if (res.data.resultCode === 0) {
+            if (res.data.resultCode === ResultCode.success) {
                 return arg;
             } else {
                 handleServerAppError(res.data, dispatch);
