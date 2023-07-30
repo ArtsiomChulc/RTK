@@ -1,5 +1,5 @@
 import { tasksActions, tasksReducer, TasksStateType, tasksThunk } from "./tasks-reducer";
-import { TaskPriorities, TaskStatuses } from "api/todolists-api";
+import { AddTaskArgType, TaskPriorities, TaskStatuses } from "api/todolists-api";
 import { todosActions } from "features/TodolistsList/todolists-reducer";
 
 let startState: TasksStateType = {};
@@ -95,20 +95,25 @@ test("correct task should be deleted from correct array", () => {
 });
 test("correct task should be added to correct array", () => {
     //const action = addTaskAC("juce", "todolistId2");
-    const action = tasksActions.addTask({
-        task: {
-            todoListId: "todolistId2",
-            title: "juce",
-            status: TaskStatuses.New,
-            addedDate: "",
-            deadline: "",
-            description: "",
-            order: 0,
-            priority: 0,
-            startDate: "",
-            id: "id exists",
+    const task = {
+        todoListId: "todolistId2",
+        title: "juce",
+        status: TaskStatuses.New,
+        addedDate: "",
+        deadline: "",
+        description: "",
+        order: 0,
+        priority: 0,
+        startDate: "",
+        id: "id exists",
+    };
+    const action = tasksThunk.addTaskTC.fulfilled(
+        {
+            task,
         },
-    });
+        "requestId",
+        { title: task.title, todolistId: task.todoListId },
+    );
 
     const endState = tasksReducer(startState, action);
 
