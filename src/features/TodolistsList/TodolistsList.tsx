@@ -11,7 +11,7 @@ import {
     todosActions,
 } from "./todolists-reducer";
 import { removeTaskTC, TasksStateType, tasksThunk } from "./tasks-reducer";
-import { TaskStatuses } from "common/api/todolists-api";
+import { TaskStatuses } from "common/api/common.api";
 import { Grid, Paper } from "@mui/material";
 import { Todolist } from "./Todolist/Todolist";
 import { Navigate } from "react-router-dom";
