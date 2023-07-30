@@ -11,11 +11,11 @@ import {
     todosActions,
 } from "./todolists-reducer";
 import { removeTaskTC, TasksStateType, tasksThunk } from "./tasks-reducer";
-import { TaskStatuses } from "api/todolists-api";
+import { TaskStatuses } from "common/api/todolists-api";
 import { Grid, Paper } from "@mui/material";
 import { Todolist } from "./Todolist/Todolist";
 import { Navigate } from "react-router-dom";
-import { useAppDispatch } from "hooks/useAppDispatch";
+import { useAppDispatch } from "common/hooks/useAppDispatch";
 import { AddItemForm } from "components/AddItemForm/AddItemForm";
 import { selectIsLoggedIn } from "features/Login/auth.selector";
 
