@@ -102,7 +102,7 @@ const removeTaskTC = createAppAsyncThunk<
     { taskId: string; todolistId: string },
     { taskId: string; todolistId: string }
 >("tasks/removeTask", async ({ taskId, todolistId }) => {
-    const response = await todolistsAPI.deleteTask(todolistId, taskId);
+    await todolistsAPI.deleteTask(todolistId, taskId);
     return { taskId, todolistId };
 });
 

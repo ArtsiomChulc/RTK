@@ -38,6 +38,11 @@ export type TodolistType = {
     order: number;
 };
 
+export type UpdateTodolistTitleArgType = {
+    id: string;
+    title: string;
+};
+
 export type TaskType = {
     description: string;
     title: string;
