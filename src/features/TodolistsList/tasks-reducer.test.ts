@@ -174,7 +174,8 @@ test("new array should be added when new todolist is added", () => {
     expect(endState[newKey]).toEqual([]);
 });
 test("property with todolistId should be deleted", () => {
-    const action = todosActions.removeTodolist({ id: "todolistId2" });
+    const arg = { id: "todolistId2" };
+    const action = todosThunk.removeTodolist.fulfilled(arg, "requestId", arg.id);
 
     const endState = tasksReducer(startState, action);
 
