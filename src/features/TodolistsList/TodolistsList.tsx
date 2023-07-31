@@ -1,14 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { AppRootStateType } from "app/store";
-import {
-    fetchTodolistsTC,
-    FilterValuesType,
-    removeTodolistTC,
-    TodolistDomainType,
-    todosActions,
-    todosThunk,
-} from "./todolists-reducer";
+import { FilterValuesType, removeTodolistTC, TodolistDomainType, todosActions, todosThunk } from "./todolists-reducer";
 import { TasksStateType, tasksThunk } from "./tasks-reducer";
 import { TaskStatuses } from "common/api/common.api";
 import { Grid, Paper } from "@mui/material";
@@ -34,7 +27,7 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
         if (demo || !isLoggedIn) {
             return;
         }
-        const thunk = fetchTodolistsTC();
+        const thunk = todosThunk.fetchTodolists();
         dispatch(thunk);
     }, []);
 

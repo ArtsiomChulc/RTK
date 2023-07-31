@@ -49,7 +49,7 @@ const slice = createSlice({
             .addCase(todosActions.removeTodolist, (state, action) => {
                 delete state[action.payload.id];
             })
-            .addCase(todosActions.setTodolists, (state, action) => {
+            .addCase(todosThunk.fetchTodolists.fulfilled, (state, action) => {
                 action.payload.todolists.forEach((tl) => {
                     state[tl.id] = [];
                 });
