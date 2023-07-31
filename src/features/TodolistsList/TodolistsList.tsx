@@ -2,15 +2,15 @@ import React, { useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { AppRootStateType } from "app/store";
 import {
-    addTodolistTC,
     changeTodolistTitleTC,
     fetchTodolistsTC,
     FilterValuesType,
     removeTodolistTC,
     TodolistDomainType,
     todosActions,
+    todosThunk,
 } from "./todolists-reducer";
-import { removeTaskTC, TasksStateType, tasksThunk } from "./tasks-reducer";
+import { TasksStateType, tasksThunk } from "./tasks-reducer";
 import { TaskStatuses } from "common/api/common.api";
 import { Grid, Paper } from "@mui/material";
 import { Todolist } from "./Todolist/Todolist";
@@ -39,8 +39,8 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
         dispatch(thunk);
     }, []);
 
-    const removeTask = useCallback(function (id: string, todolistId: string) {
-        const thunk = removeTaskTC(id, todolistId);
+    const removeTask = useCallback(function (taskId: string, todolistId: string) {
+        const thunk = tasksThunk.removeTaskTC({ taskId, todolistId });
         dispatch(thunk);
     }, []);
 
@@ -73,8 +73,7 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
 
     const addTodolist = useCallback(
         (title: string) => {
-            const thunk = addTodolistTC(title);
-            dispatch(thunk);
+            dispatch(todosThunk.addTodolist(title));
         },
         [dispatch],
     );

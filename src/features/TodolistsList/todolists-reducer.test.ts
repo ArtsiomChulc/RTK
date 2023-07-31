@@ -1,4 +1,4 @@
-import { FilterValuesType, TodolistDomainType, todolistsReducer, todosActions } from "./todolists-reducer";
+import { FilterValuesType, TodolistDomainType, todolistsReducer, todosActions, todosThunk } from "./todolists-reducer";
 import { v1 } from "uuid";
 import { RequestStatusType } from "app/app-reducer";
 import { TodolistType } from "features/TodolistsList/todolist.api";
@@ -31,7 +31,10 @@ test("correct todolist should be added", () => {
         order: 0,
     };
 
-    const endState = todolistsReducer(startState, todosActions.addTodolist({ todolist }));
+    const endState = todolistsReducer(
+        startState,
+        todosThunk.addTodolist.fulfilled({ todolist }, "requestId", todolist.title),
+    );
 
     expect(endState.length).toBe(3);
     expect(endState[0].title).toBe(todolist.title);

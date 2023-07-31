@@ -1,6 +1,6 @@
 import { tasksActions, tasksReducer, TasksStateType, tasksThunk } from "./tasks-reducer";
 import { TaskPriorities, TaskStatuses } from "common/api/common.api";
-import { todosActions } from "features/TodolistsList/todolists-reducer";
+import { todosActions, todosThunk } from "features/TodolistsList/todolists-reducer";
 
 let startState: TasksStateType = {};
 beforeEach(() => {
@@ -85,7 +85,8 @@ beforeEach(() => {
 });
 
 test("correct task should be deleted from correct array", () => {
-    const action = tasksActions.removeTask({ taskId: "2", todolistId: "todolistId2" });
+    const args = { taskId: "2", todolistId: "todolistId2" };
+    const action = tasksThunk.removeTaskTC.fulfilled({ taskId: "2", todolistId: "todolistId2" }, "requestId", args);
 
     const endState = tasksReducer(startState, action);
 
@@ -147,14 +148,19 @@ test("title of specified task should be changed", () => {
     expect(endState["todolistId2"][0].title).toBe("bread");
 });
 test("new array should be added when new todolist is added", () => {
-    const action = todosActions.addTodolist({
-        todolist: {
-            id: "blabla",
-            title: "new todolist",
-            order: 0,
-            addedDate: "",
+    const todolist = {
+        id: "blabla",
+        title: "new todolist",
+        order: 0,
+        addedDate: "",
+    };
+    const action = todosThunk.addTodolist.fulfilled(
+        {
+            todolist,
         },
-    });
+        "requestId",
+        todolist.title,
+    );
 
     const endState = tasksReducer(startState, action);
 
