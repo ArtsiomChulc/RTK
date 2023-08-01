@@ -1,10 +1,8 @@
 import { authAPI, LoginParamsType } from "../Login/auth.api";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppThunk } from "app/store";
+import { createSlice } from "@reduxjs/toolkit";
 import { appActions } from "app/app-reducer";
 import { clearTaskAndTodos } from "common/actions/common.actions";
 import { handleServerAppError } from "common/utils/handle-server-app-error";
-import { handleServerNetworkError } from "common/utils/handle-server-network-error";
 import { createAppAsyncThunk } from "common/utils";
 
 // вместо authReducer
@@ -78,7 +76,7 @@ const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>("aut
             dispatch(appActions.setAppStatus({ status: "succeeded" }));
             return { isLoggedIn: true };
         } else {
-            handleServerAppError(res.data, dispatch);
+            handleServerAppError(res.data, dispatch, false);
             return rejectWithValue(res.data);
         }
     } catch (e: any) {

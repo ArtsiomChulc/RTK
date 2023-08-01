@@ -17,16 +17,16 @@ export const Login = () => {
     const isLoggedIn = useSelector(selectIsLoggedIn);
     const formik = useFormik({
         validate: (values) => {
-            // if (!values.email) {
-            //     return {
-            //         email: "Email is required",
-            //     };
-            // }
-            // if (!values.password) {
-            //     return {
-            //         password: "Password is required",
-            //     };
-            // }
+            if (!values.email) {
+                return {
+                    email: "Email is required",
+                };
+            }
+            if (!values.password) {
+                return {
+                    password: "Password is required",
+                };
+            }
         },
         initialValues: {
             email: "",
@@ -37,7 +37,6 @@ export const Login = () => {
             dispatch(authThunk.login(values))
                 .unwrap()
                 .catch((reason: ResponseType) => {
-                    debugger;
                     reason.fieldsErrors.forEach((fieldError) => {
                         formikHelpers.setFieldError(fieldError.field, fieldError.error);
                     });
