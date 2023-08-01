@@ -19,9 +19,13 @@ const slice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(login.fulfilled, (state, action) => {
-            state.isLoggedIn = action.payload.isLoggedIn;
-        });
+        builder
+            .addCase(login.fulfilled, (state, action) => {
+                state.isLoggedIn = action.payload.isLoggedIn;
+            })
+            .addCase(logOut.fulfilled, (state, action) => {
+                state.isLoggedIn = action.payload.isLoggedIn;
+            });
     },
 });
 
@@ -80,29 +84,49 @@ const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>("aut
     }
 });
 
-export const logoutTC = (): AppThunk => (dispatch) => {
-    dispatch(appActions.setAppStatus({ status: "loading" }));
-    authAPI
-        .logout()
-        .then((res) => {
-            if (res.data.resultCode === 0) {
-                dispatch(authActions.setIsLoggedIn({ isLoggedIn: false }));
-                // dispatch(tasksActions.clearTasks());
-                // dispatch(todosActions.clearTodolists()); первый вариант решения проблемы с LogOut
-                dispatch(clearTaskAndTodos({ tasks: {}, todolists: [] })); // второй вариант решения проблемы с LogOut
-                dispatch(appActions.setAppStatus({ status: "succeeded" }));
-            } else {
-                handleServerAppError(res.data, dispatch);
-            }
-        })
-        .catch((error) => {
-            handleServerNetworkError(error, dispatch);
-        });
-};
+const logOut = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("auth/logOut", async (_, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI;
+    try {
+        const res = await authAPI.logout();
+        if (res.data.resultCode === 0) {
+            // dispatch(tasksActions.clearTasks());
+            // dispatch(todosActions.clearTodolists()); первый вариант решения проблемы с LogOut
+            dispatch(clearTaskAndTodos({ tasks: {}, todolists: [] })); // второй вариант решения проблемы с LogOut
+            dispatch(appActions.setAppStatus({ status: "succeeded" }));
+            return { isLoggedIn: false };
+        } else {
+            handleServerAppError(res.data, dispatch);
+            return rejectWithValue(null);
+        }
+    } catch (e: any) {
+        handleServerAppError(e, dispatch);
+        return rejectWithValue(null);
+    }
+});
+
+// export const logoutTC = (): AppThunk => (dispatch) => {
+//     dispatch(appActions.setAppStatus({ status: "loading" }));
+//     authAPI
+//         .logout()
+//         .then((res) => {
+//             if (res.data.resultCode === 0) {
+//                 dispatch(authActions.setIsLoggedIn({ isLoggedIn: false }));
+//                 // dispatch(tasksActions.clearTasks());
+//                 // dispatch(todosActions.clearTodolists()); первый вариант решения проблемы с LogOut
+//                 dispatch(clearTaskAndTodos({ tasks: {}, todolists: [] })); // второй вариант решения проблемы с LogOut
+//                 dispatch(appActions.setAppStatus({ status: "succeeded" }));
+//             } else {
+//                 handleServerAppError(res.data, dispatch);
+//             }
+//         })
+//         .catch((error) => {
+//             handleServerNetworkError(error, dispatch);
+//         });
+// };
 
 export const authReducer = slice.reducer;
 export const authActions = slice.actions;
-export const authThunk = { login };
+export const authThunk = { login, logOut };
 
 // types
 
