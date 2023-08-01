@@ -9,6 +9,7 @@ import { Dispatch } from "redux";
  * @param {Dispatch} dispatch - Функция диспетчера из redux для обновления состояния приложения.
  * @param {boolean} [showError=true] - Флаг, указывающий, нужно ли отображать ошибку пользователю.
  */
+
 export const handleServerAppError = <D>(data: ResponseType<D>, dispatch: Dispatch, showError: boolean = true) => {
     if (showError) {
         dispatch(
