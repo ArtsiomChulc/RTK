@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { clearTaskAndTodos } from "common/actions/common.actions";
 import { createAppAsyncThunk, handleServerAppError } from "common/utils";
 import { todolistsAPI, TodolistType, UpdateTodolistTitleArgType } from "features/TodolistsList/todolist.api";
+import { thunkTryCatch } from "common/utils/thunk-try-catch";
 
 const slice = createSlice({
     name: "todolist",
@@ -152,15 +153,15 @@ const addTodolist = createAppAsyncThunk<{ todolist: TodolistType }, string>(
     "todolist/addTodolist",
     async (title, thunkAPI) => {
         const { dispatch, rejectWithValue } = thunkAPI;
-        try {
-            dispatch(appActions.setAppStatus({ status: "loading" }));
+        return thunkTryCatch(thunkAPI, async () => {
             const res = await todolistsAPI.createTodolist(title);
-            dispatch(appActions.setAppStatus({ status: "succeeded" }));
-            return { todolist: res.data.data.item };
-        } catch (e: any) {
-            handleServerAppError(e, dispatch);
-            return rejectWithValue(null);
-        }
+            if (res.data.resultCode === 0) {
+                return { todolist: res.data.data.item };
+            } else {
+                handleServerAppError(res.data, dispatch);
+                return rejectWithValue(null);
+            }
+        });
     },
 );
 
