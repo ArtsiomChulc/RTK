@@ -3,7 +3,6 @@ import "./App.css";
 import { TodolistsList } from "features/TodolistsList/TodolistsList";
 import { ErrorSnackbar } from "components/ErrorSnackbar/ErrorSnackbar";
 import { useDispatch, useSelector } from "react-redux";
-import { initializeAppTC } from "./app-reducer";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Login } from "features/Login/Login";
 import {
@@ -34,7 +33,7 @@ function App({ demo = false }: PropsType) {
     const dispatch = useDispatch<any>();
 
     useEffect(() => {
-        dispatch(initializeAppTC());
+        dispatch(authThunk.initializeApp());
     }, []);
 
     const logoutHandler = useCallback(() => {

@@ -14,9 +14,9 @@ const slice = createSlice({
         isLoggedIn: false,
     },
     reducers: {
-        setIsLoggedIn: (state, action: PayloadAction<{ isLoggedIn: boolean }>) => {
-            state.isLoggedIn = action.payload.isLoggedIn;
-        },
+        // setIsLoggedIn: (state, action: PayloadAction<{ isLoggedIn: boolean }>) => {
+        //     state.isLoggedIn = action.payload.isLoggedIn;
+        // },
     },
     extraReducers: (builder) => {
         builder
@@ -24,6 +24,9 @@ const slice = createSlice({
                 state.isLoggedIn = action.payload.isLoggedIn;
             })
             .addCase(logOut.fulfilled, (state, action) => {
+                state.isLoggedIn = action.payload.isLoggedIn;
+            })
+            .addCase(initializeApp.fulfilled, (state, action) => {
                 state.isLoggedIn = action.payload.isLoggedIn;
             });
     },
@@ -104,6 +107,24 @@ const logOut = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("auth/logOut",
     }
 });
 
+const initializeApp = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("app/initializeApp", async (_, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI;
+    try {
+        const res = await authAPI.me();
+        if (res.data.resultCode === 0) {
+            return { isLoggedIn: true };
+        } else {
+            handleServerAppError(res.data, dispatch);
+            return rejectWithValue(null);
+        }
+    } catch (e: any) {
+        handleServerAppError(e, dispatch);
+        return rejectWithValue(null);
+    } finally {
+        dispatch(appActions.setAppInitialized({ isInitialized: true }));
+    }
+});
+
 // export const logoutTC = (): AppThunk => (dispatch) => {
 //     dispatch(appActions.setAppStatus({ status: "loading" }));
 //     authAPI
@@ -126,7 +147,7 @@ const logOut = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("auth/logOut",
 
 export const authReducer = slice.reducer;
 export const authActions = slice.actions;
-export const authThunk = { login, logOut };
+export const authThunk = { login, logOut, initializeApp };
 
 // types
 

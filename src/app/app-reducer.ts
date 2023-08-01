@@ -1,8 +1,4 @@
-import { Dispatch } from "redux";
-import { authAPI } from "features/Login/auth.api";
-import { authActions } from "features/Login/auth-reducer";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppThunk } from "app/store";
 
 const slice = createSlice({
     name: "app",
@@ -24,9 +20,6 @@ const slice = createSlice({
     },
 });
 
-export const appReducer = slice.reducer;
-export const appActions = slice.actions;
-
 // const initialState: InitialStateType = {
 //     status: "idle",
 //     error: null,
@@ -43,16 +36,34 @@ export type InitialStateType = {
     isInitialized: boolean;
 };
 
-export const initializeAppTC = (): AppThunk => (dispatch) => {
-    authAPI.me().then((res) => {
-        if (res.data.resultCode === 0) {
-            dispatch(authActions.setIsLoggedIn({ isLoggedIn: true }));
-        } else {
-        }
+// const initializeApp = createAppAsyncThunk<{ isLoggedIn: boolean }, void>("app/initializeApp", async (arg, thunkAPI) => {
+//     const { dispatch, rejectWithValue } = thunkAPI;
+//     try {
+//         const res = await authAPI.me();
+//         if (res.data.resultCode === 0) {
+//             return { isLoggedIn: true };
+//         } else {
+//         }
+//     } catch (e: any) {
+//         handleServerAppError(e, dispatch);
+//         return rejectWithValue(null);
+//     }
+//     dispatch(appActions.setAppInitialized({ isInitialized: true }));
+// });
 
-        dispatch(appActions.setAppInitialized({ isInitialized: true }));
-    });
-};
+// export const initializeAppTC = (): AppThunk => (dispatch) => {
+//     authAPI.me().then((res) => {
+//         if (res.data.resultCode === 0) {
+//             dispatch(authActions.setIsLoggedIn({ isLoggedIn: true }));
+//         } else {
+//         }
+//
+//         dispatch(appActions.setAppInitialized({ isInitialized: true }));
+//     });
+// };
+
+export const appReducer = slice.reducer;
+export const appActions = slice.actions;
 
 // export type SetAppErrorActionType = ReturnType<typeof appActions.setAppError>;
 // export type SetAppStatusActionType = ReturnType<typeof appActions.setAppStatus>;
