@@ -1,0 +1,7 @@
+.fieldError {
+    color: white;
+    background-color: rgba(231, 20, 20, 0.94);
+    border: 1px solid;
+    padding: 5px;
+    text-align: center;
+}

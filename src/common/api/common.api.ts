@@ -16,12 +16,6 @@ export const instance = axios.create({
 
 // types
 
-export type ResponseType<D = {}> = {
-    resultCode: number;
-    messages: Array<string>;
-    data: D;
-};
-
 export enum TaskStatuses {
     New = 0,
     InProgress = 1,
