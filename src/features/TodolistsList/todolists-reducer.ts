@@ -1,8 +1,7 @@
 import { appActions, RequestStatusType } from "app/app-reducer";
-import { AppThunk } from "app/store";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { clearTaskAndTodos } from "common/actions/common.actions";
-import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from "common/utils";
+import { createAppAsyncThunk, handleServerAppError } from "common/utils";
 import { todolistsAPI, TodolistType, UpdateTodolistTitleArgType } from "features/TodolistsList/todolist.api";
 
 const slice = createSlice({
@@ -97,10 +96,15 @@ const fetchTodolists = createAppAsyncThunk<{ todolists: TodolistType[] }, void>(
     "todolist/fetchTodolists",
     async (arg, thunkAPI) => {
         const { dispatch, rejectWithValue } = thunkAPI;
-        dispatch(appActions.setAppStatus({ status: "loading" }));
-        const res = await todolistsAPI.getTodolists();
-        dispatch(appActions.setAppStatus({ status: "succeeded" }));
-        return { todolists: res.data };
+        try {
+            dispatch(appActions.setAppStatus({ status: "loading" }));
+            const res = await todolistsAPI.getTodolists();
+            dispatch(appActions.setAppStatus({ status: "succeeded" }));
+            return { todolists: res.data };
+        } catch (e: any) {
+            handleServerAppError(e, dispatch);
+            return rejectWithValue(null);
+        }
     },
 );
 
