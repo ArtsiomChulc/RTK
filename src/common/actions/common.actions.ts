@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
-import { TasksStateType } from "features/TodolistsList/tasks-reducer";
-import { TodolistDomainType } from "features/TodolistsList/todolists-reducer";
+import { TasksStateType } from "features/todolists-list/tasks/model/tasks-reducer";
+import { TodolistDomainType } from "features/todolists-list/todolists/model/todolists-reducer";
 
 export type ClearTaskAndTodosType = {
     tasks: TasksStateType; //третий вариант решения проблемы с LogOut

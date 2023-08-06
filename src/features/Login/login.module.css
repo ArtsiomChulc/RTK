@@ -5,3 +5,11 @@
     padding: 5px;
     text-align: center;
 }
+
+.eyePassword {
+    width: 20px;
+    /*position: absolute;*/
+    /*top: 71%;*/
+    /*right: 10px;*/
+    /*transform: translate(-71%, -10px);*/
+}

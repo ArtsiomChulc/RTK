@@ -2,8 +2,9 @@ import { appActions, RequestStatusType } from "app/app-reducer";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { clearTaskAndTodos } from "common/actions/common.actions";
 import { createAppAsyncThunk, handleServerAppError } from "common/utils";
-import { todolistsAPI, TodolistType, UpdateTodolistTitleArgType } from "features/TodolistsList/todolist.api";
+import { todolistsAPI } from "features/todolists-list/todolists/api/todolist.api";
 import { thunkTryCatch } from "common/utils/thunk-try-catch";
+import { TodolistType, UpdateTodolistTitleArgType } from "features/todolists-list/todolists/api/todolist.api.types";
 
 const slice = createSlice({
     name: "todolist",

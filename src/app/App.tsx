@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
 import "./App.css";
-import { TodolistsList } from "features/TodolistsList/TodolistsList";
+import { TodolistsList } from "features/todolists-list/Todolists.List";
 import { ErrorSnackbar } from "components/ErrorSnackbar/ErrorSnackbar";
 import { useSelector } from "react-redux";
 import { BrowserRouter, Route, Routes } from "react-router-dom";

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormikHelpers, useFormik } from "formik";
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
@@ -9,24 +9,34 @@ import { authThunk } from "features/Login/auth-reducer";
 import { LoginParamsType } from "features/Login/auth.api";
 import s from "./login.module.css";
 import { ResponseType } from "common/types";
+import eye from "../../common/icons/eye.svg";
+
+type FormikErrorType = {
+    email?: string;
+    password?: string;
+};
 
 export const Login = () => {
     const dispatch = useAppDispatch();
+    const [showPassword, setShowPassword] = useState(false);
+    const [isFormEmpty, setIsFormEmpty] = useState(true);
 
     // const isLoggedIn = useSelector<AppRootStateType, boolean>((state) => state.auth.isLoggedIn);
     const isLoggedIn = useSelector(selectIsLoggedIn);
     const formik = useFormik({
         validate: (values) => {
+            const errors: FormikErrorType = {};
             if (!values.email) {
-                return {
-                    email: "Email is required",
-                };
+                errors.email = "Email is required";
+            } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+                errors.email = "Invalid email address";
             }
             if (!values.password) {
-                return {
-                    password: "Password is required",
-                };
+                errors.password = "Password is required";
+            } else if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/i.test(values.password)) {
+                errors.password = "Incorrect password";
             }
+            return errors;
         },
         initialValues: {
             email: "",
@@ -44,6 +54,14 @@ export const Login = () => {
         },
     });
 
+    const changeShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const handleFormChange = () => {
+        setIsFormEmpty(Object.values(formik.values).every((value) => value === ""));
+    };
+
     if (isLoggedIn) {
         return <Navigate to={"/"} />;
     }
@@ -51,7 +69,7 @@ export const Login = () => {
     return (
         <Grid container justifyContent="center">
             <Grid item xs={4}>
-                <form onSubmit={formik.handleSubmit}>
+                <form onSubmit={formik.handleSubmit} onChange={handleFormChange}>
                     <FormControl>
                         <FormLabel>
                             <p>
@@ -68,11 +86,13 @@ export const Login = () => {
                             <TextField label="Email" margin="normal" {...formik.getFieldProps("email")} />
                             {formik.errors.email ? <div className={s.fieldError}>{formik.errors.email}</div> : null}
                             <TextField
-                                type="password"
+                                className={s.passwordField}
+                                type={showPassword ? "text" : "password"}
                                 label="Password"
                                 margin="normal"
                                 {...formik.getFieldProps("password")}
                             />
+                            <img onClick={changeShowPassword} className={s.eyePassword} src={eye} alt="" />
                             {formik.errors.password ? (
                                 <div className={s.fieldError}>{formik.errors.password}</div>
                             ) : null}
@@ -85,7 +105,7 @@ export const Login = () => {
                                     />
                                 }
                             />
-                            <Button type={"submit"} variant={"contained"} color={"primary"}>
+                            <Button disabled={isFormEmpty} type={"submit"} variant={"contained"} color={"primary"}>
                                 Login
                             </Button>
                         </FormGroup>
