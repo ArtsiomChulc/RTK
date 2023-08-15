@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/RTK/static/css/main.cce1ba2c.css",
-    "main.js": "/RTK/static/js/main.f3ce8909.js",
+    "main.js": "/RTK/static/js/main.0785cec2.js",
     "index.html": "/RTK/index.html",
     "static/media/eye.svg": "/RTK/static/media/eye.6a6adb30bbc8704e1f5b36ca68722fa7.svg",
     "main.cce1ba2c.css.map": "/RTK/static/css/main.cce1ba2c.css.map",
-    "main.f3ce8909.js.map": "/RTK/static/js/main.f3ce8909.js.map"
+    "main.0785cec2.js.map": "/RTK/static/js/main.0785cec2.js.map"
   },
   "entrypoints": [
     "static/css/main.cce1ba2c.css",
-    "static/js/main.f3ce8909.js"
+    "static/js/main.0785cec2.js"
   ]
 }
